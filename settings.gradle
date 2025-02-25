@@ -1,0 +1,12 @@
+rootProject.name = 'mcengine-addon'
+
+// Define base directories for subprojects
+def coreProjects = ['mcengine-addon-api', 'common']
+
+def serverProjects = ['spigotmc']
+
+// Include core projects
+coreProjects.each { include it }
+
+// Dynamically include server projects
+serverProjects.each { include "server:${it}" }

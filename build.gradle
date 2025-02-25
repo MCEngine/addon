@@ -1,0 +1,162 @@
+plugins {
+    id 'com.github.johnrengelman.shadow' version '8.1.1'
+    id 'java'
+}
+
+// Set project version using a property, defaulting to 'unspecified' if not found
+version = project.findProperty("${project.name}-version") ?: 'unspecified'
+group = 'io.github.mcengine'
+
+allprojects {
+    group = 'io.github.mcengine'
+
+    apply plugin: 'java'
+    apply plugin: 'com.github.johnrengelman.shadow'
+
+    repositories {
+        mavenCentral()
+        mavenLocal()
+        
+        // GitHub Packages repository for MCEngine dependencies
+        maven {
+            url = uri("https://maven.pkg.github.com/MCEngine/mcengine")
+            credentials {
+                username = System.getenv("GIT_USERNAME")
+                password = System.getenv('MCENGINE_GITHUB_TOKEN_PKG_READ_MCENGINE') ?: 
+                          System.getenv('MCENGINE_GITHUB_TOKEN_PKG_READ')
+            }
+        }
+
+        maven {
+            url 'https://hub.spigotmc.org/nexus/content/repositories/snapshots'
+            content {
+                includeGroup 'org.bukkit'
+                includeGroup 'org.spigotmc'
+            }
+        }
+
+        // Additional Maven repositories
+        maven { url 'https://oss.sonatype.org/content/repositories/snapshots' }
+        maven { url 'https://oss.sonatype.org/content/repositories/central' }
+    }
+}
+
+subprojects {
+    apply plugin: 'java'
+
+    // Disable default JAR task if necessary
+    tasks.named('jar').configure {
+        enabled = false
+    }
+
+    // List of projects that should not build the shadow JAR
+    def excludeBuildProjects = [':server']
+    if (project.path in excludeBuildProjects) {
+        tasks.matching { it.name == 'shadowJar' }.configureEach {
+            enabled = false
+        }
+    }
+
+    // Ensure version property is assigned correctly
+    version = project.findProperty("${project.name}-version") ?: 'unspecified'
+
+    // Configure Shadow JAR plugin
+    shadowJar {
+        archiveClassifier = null
+        destinationDirectory.set(file("${rootProject.buildDir}/libs"))
+    }
+
+    // Dependencies for server-related projects
+    if (project.path.startsWith(':server:')) {
+        dependencies {
+            implementation project(path: ':mcengine-addon-api', configuration: 'shadow')
+            implementation project(path: ':common', configuration: 'shadow')
+        }
+    }
+
+    // SpigotMC-specific resource processing (for plugin.yml)
+    if (project.name == 'spigotmc') {
+        processResources {
+            def props = [version: version]
+            inputs.properties(props)
+            filteringCharset 'UTF-8'
+            filesMatching('plugin.yml') {
+                expand(props)
+            }
+        }
+    }
+
+    // Publishing setup for mcengine-addon-api
+    if (project.name == 'mcengine-addon-api') {
+        apply plugin: 'maven-publish'
+
+        publishing {
+            repositories {
+                maven {
+                    name = 'GitHubPackages'
+                    url = uri('https://maven.pkg.github.com/MCEngine/addon')
+                    credentials {
+                        username = System.getenv('GIT_USERNAME')
+                        password = System.getenv('MCENGINE_GITHUB_TOKEN_PKG_PUBLISH_ADDON') ?:
+                                  System.getenv('MCENGINE_GITHUB_TOKEN_PKG_PUBLISH')
+                    }
+                }
+            }
+            publications {
+                mavenJava(MavenPublication) {
+                    artifact(tasks.named('shadowJar').get())
+
+                    pom {
+                        name.set('MCEngine AddOn API')
+                        description.set('API for addon operations in MCEngine projects')
+                        url.set('https://github.com/MCEngine/addon')
+
+                        scm {
+                            connection.set('scm:git:git://github.com/MCEngine/addon.git')
+                            developerConnection.set('scm:git:ssh://github.com:MCEngine/addon.git')
+                            url.set('https://github.com/MCEngine/addon')
+                        }
+
+                        developers {
+                            developer {
+                                id.set('JetsadaWijit')
+                                name.set('Jetsada Wijit')
+                                email.set('jetsadawijit@outlook.com')
+                                url.set('https://github.com/JetsadaWijit')
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
+
+// Root project dependencies
+dependencies {
+    implementation project(path: ':mcengine-addon-api', configuration: 'shadow')
+    implementation project(path: ':common', configuration: 'shadow')
+
+    // Dynamically include all server projects
+    rootProject.subprojects.each { subproject ->
+        if (subproject.name != 'mcengine-addon-api' && subproject.name != 'common') {
+            def serverProjectPath = subproject.path.startsWith(':server') ? subproject.path : ":server:${subproject.name}"
+            implementation project(path: serverProjectPath, configuration: 'shadow')
+        }
+    }
+}
+
+// Root shadow JAR configuration
+shadowJar {
+    version = null
+    archiveClassifier = null
+    archiveBaseName.set('MCEngineAddon')
+}
+
+// Disable default JAR task if necessary
+tasks.named('jar').configure {
+    enabled = false
+}
+
+// Ensure build depends on shadow JAR
+build.dependsOn(shadowJar)

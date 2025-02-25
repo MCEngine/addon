@@ -1,0 +1,18 @@
+plugins {
+    id 'java-library'
+}
+
+def spigotApiVersion = project.findProperty('spigotmc-api-version')
+def mcengineApiVersion = project.findProperty('mcengine-api-version')
+
+dependencies {
+    // Database
+    compileOnly 'mysql:mysql-connector-java:8.0.33'
+    compileOnly 'org.xerial:sqlite-jdbc:3.47.0.0'
+
+    // MCEngine
+    compileOnly "io.github.mcengine:mcengine-api:${mcengineApiVersion}"
+
+    // Server Platform
+    compileOnly "org.spigotmc:spigot-api:${spigotApiVersion}"
+}

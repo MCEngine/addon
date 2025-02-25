@@ -1,0 +1,7 @@
+name: MCEngineAddOn
+version: ${version}
+main: io.github.mcengine.spigotmc.addon.MCEngineAddOn
+author: MCEngine
+description: MCEngine AddOn
+api-version: 1.18
+depen: [MCEngine]
