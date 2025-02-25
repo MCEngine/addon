@@ -2,6 +2,10 @@
 
 This plugin is always kept up-to-date with the latest version of SpigotMC.
 
+# Information
+
+This project is created for Minecraft plugin development, allowing addons to be downloaded for each project. For more information, please visit the ['Website'](http://github.com/MCEngine/addon-website).
+
 # 🌎 Environment Variables
 
 - **`GIT_USERNAME`** – Your GitHub username.
