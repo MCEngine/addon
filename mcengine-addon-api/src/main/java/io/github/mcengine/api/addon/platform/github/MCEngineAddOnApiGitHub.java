@@ -1,3 +1,5 @@
+package io.github.mcengine.api.addon.platform.github;
+
 import org.bukkit.plugin.Plugin;
 
 import java.io.*;
