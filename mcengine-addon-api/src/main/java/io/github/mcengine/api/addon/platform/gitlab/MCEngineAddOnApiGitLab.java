@@ -32,16 +32,20 @@ public class MCEngineAddOnApiGitLab {
      * @param repository The name of the repository.
      * @param file        The name of the file to be downloaded from the release.
      * @param path        The path where the downloaded add-on should be installed.
+     * @param directToken The GitLab personal access token to use for authentication. If null, the default token will be used.
      */
-    public void downloadAddOn(String owner, String repository, String file, String path) {
+    public void downloadAddOn(String owner, String repository, String file, String path, String directToken) {
+        // Use the provided token if available; otherwise, fall back to the default token
+        String tokenToUse = (directToken != null) ? directToken : token;
+
         try {
             // First, get the project ID from GitLab's API using the owner and repository
             String projectIdUrl = "https://gitlab.com/api/v4/projects/" + encodeRepository(owner + "/" + repository);
             URI uri = new URI(projectIdUrl);  // Using URI instead of URL constructor
             HttpURLConnection connection = (HttpURLConnection) uri.toURL().openConnection();
 
-            // Set authorization header
-            connection.setRequestProperty("Authorization", "Bearer " + token);
+            // Set authorization header with the appropriate token
+            connection.setRequestProperty("Authorization", "Bearer " + tokenToUse);
             connection.setRequestMethod("GET");
 
             // Handle server response to get the project ID

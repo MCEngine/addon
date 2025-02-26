@@ -34,21 +34,25 @@ public class MCEngineAddOnApiGitHub {
      * @param repository  The name of the repository.
      * @param file        The name of the file to be downloaded from the release.
      * @param path        The path where the downloaded add-on should be installed.
+     * @param directToken The GitHub personal access token to use for authentication. If null, the default token will be used.
      */
-    public void downloadAddOn(String owner, String repository, String file, String path) {
+    public void downloadAddOn(String owner, String repository, String file, String path, String directToken) {
+        // Use the provided token if available; otherwise, fall back to the default token
+        String tokenToUse = (directToken != null) ? directToken : token;
+
         try {
-            // GitHub API URL for fetching release assets
+            // Construct the URL to fetch the releases from the GitHub repository
             String urlString = "https://api.github.com/repos/" + owner + "/" + repository + "/releases";
-            URI uri = new URI(urlString); // Use URI instead of URL constructor
-            URL url = uri.toURL(); // Convert URI to URL
+            URI uri = new URI(urlString);  // Use URI to avoid deprecated URL constructor
+            URL url = uri.toURL();         // Convert URI to URL
             HttpURLConnection connection = (HttpURLConnection) url.openConnection();
 
-            // Set authorization header
-            connection.setRequestProperty("Authorization", "token " + token);
+            // Set authorization header with the appropriate token
+            connection.setRequestProperty("Authorization", "token " + tokenToUse);
             connection.setRequestProperty("Accept", "application/vnd.github.v3+json");
             connection.setRequestMethod("GET");
 
-            // Handle server response
+            // Handle the server's response
             int responseCode = connection.getResponseCode();
             if (responseCode == HttpURLConnection.HTTP_OK) {
                 // Read the response and parse the JSON
@@ -58,10 +62,14 @@ public class MCEngineAddOnApiGitHub {
                     while ((line = reader.readLine()) != null) {
                         response.append(line);
                     }
+
+                    // Parse the JSON response to get the releases
                     JSONArray releases = new JSONArray(response.toString());
 
-                    // Find the asset by file name
+                    // Flag to check if the file was found
                     boolean fileFound = false;
+
+                    // Loop through the releases and find the requested file
                     for (int i = 0; i < releases.length(); i++) {
                         JSONObject release = releases.getJSONObject(i);
                         JSONArray assets = release.getJSONArray("assets");
@@ -72,11 +80,12 @@ public class MCEngineAddOnApiGitHub {
                                 fileFound = true;
                                 String downloadUrl = asset.getString("browser_download_url");
 
-                                // Now download the file
+                                // Download the file using the obtained URL
                                 downloadFile(downloadUrl, file, path);
                                 break;
                             }
                         }
+
                         if (fileFound) break;
                     }
 
@@ -87,7 +96,7 @@ public class MCEngineAddOnApiGitHub {
             } else {
                 plugin.getLogger().severe("Failed to fetch releases. Response Code: " + responseCode);
             }
-        } catch (Exception e) { // Catch URI and other exceptions
+        } catch (Exception e) {
             plugin.getLogger().severe("An error occurred while downloading the add-on: " + e.getMessage());
             e.printStackTrace();
         }
