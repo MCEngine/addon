@@ -130,5 +130,5 @@ public class MCEngineAddOnApiGitHub {
             plugin.getLogger().severe("An error occurred while downloading the file: " + e.getMessage());
             e.printStackTrace();
         }
-    }    
+    }
 }
