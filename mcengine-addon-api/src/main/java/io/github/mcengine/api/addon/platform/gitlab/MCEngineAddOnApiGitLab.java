@@ -1,5 +1,7 @@
 package io.github.mcengine.api.addon.platform.gitlab;
 
+import org.bukkit.plugin.Plugin;
+
 import java.io.*;
 import java.net.HttpURLConnection;
 import java.net.URI;
