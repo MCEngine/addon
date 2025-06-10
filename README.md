@@ -13,7 +13,7 @@ This project requires a server to host addon JAR files.
 It is recommended to use a URL structure like:
 
 ```
-https://addon.example.com/{project}/{addon_id}/{addon_version}
+https://addon.example.com/{project}/{addon_id}/{addon_version}/{file_name}.jar
 ```
 
 ✅ This allows everyone to use the same path format—only the domain needs to be changed.
