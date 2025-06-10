@@ -29,3 +29,13 @@ https://addon.example.com/{project}/{addon_id}/{addon_version}/{file_name}.jar
   ```
   /addon {project} {addon_id} {version}
   ```
+
+## 🔐 Important
+
+Always think about **security** when downloading and using addons.
+
+Any addon you load onto your server should have a clearly identifiable **author**.
+
+This helps determine whether the addon can be trusted and ensures the security and stability of your server.
+
+Avoid duplicate content by following a standard and unified addon hosting structure.
