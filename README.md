@@ -1,3 +1,5 @@
+[![Bstats](https://raw.githubusercontent.com/intergrav/devins-badges/refs/heads/v3/assets/cozy/available/bstats_vector.svg)](https://bstats.org/plugin/bukkit/MCEngineAddOn/25751)
+
 # 📦 Addon Downloader
 
 This project provides a way to fetch available addons from a central website and download them directly in-game using the command:
