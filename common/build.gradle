@@ -1,0 +1,17 @@
+plugins {
+    id 'java-library'
+}
+
+def mcengineApiVersion = findProperty('mcengine-api.version') ?: 'undefined'
+
+def spigotmcApiVersion = findProperty('spigotmc-api.version') ?: 'undefined'
+
+dependencies {
+    compileOnly "org.spigotmc:spigot-api:$spigotmcApiVersion"
+
+    compileOnly "io.github.mcengine:mcengine-api:$mcengineApiVersion"
+}
+
+shadowJar {
+    archiveBaseName = "${project.jarName}-Common"
+}

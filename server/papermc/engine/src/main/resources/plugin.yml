@@ -1,0 +1,6 @@
+name: MCEngineAddOn
+version: ${version}
+main: io.github.mcengine.papermc.addon.engine.MCEngineAddOnPaperMC
+author: MCEngine
+description: MCEngine AddOn
+api-version: 1.13
