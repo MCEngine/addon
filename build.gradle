@@ -19,11 +19,11 @@ ext {
     organization_token = System.getenv('ORGANIZATION_TOKEN') ?: ''
 
     // Repository
-    repository_name = System.getenv('REPOSITORY_NAME') ?: 'currency'
+    repository_name = System.getenv('REPOSITORY_NAME') ?: 'addon-engine'
     repository_token = System.getenv('REPOSITORY_TOKEN') ?: ''
 
     /* Project Information */
-    jarName = System.getenv('PROJECT_NAME') ?: 'MCEngineCurrency'
+    jarName = System.getenv('PROJECT_NAME') ?: 'MCEngineAddOn'
 }
 
 allprojects {

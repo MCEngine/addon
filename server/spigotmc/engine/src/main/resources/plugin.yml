@@ -4,3 +4,9 @@ main: io.github.mcengine.spigotmc.addon.engine.MCEngineAddOnSpigotMC
 author: MCEngine
 description: MCEngine AddOn
 api-version: 1.13
+commands:
+  addon:
+    description: View loaded AddOns per MCEngine project
+    usage: /addon list or /addon <project> list
+    permission: mcengine.addon.command
+    permission-message: You do not have permission to use this command.
