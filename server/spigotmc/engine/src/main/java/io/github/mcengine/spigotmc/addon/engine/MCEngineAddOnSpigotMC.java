@@ -2,8 +2,6 @@ package io.github.mcengine.spigotmc.addon.engine;
 
 import io.github.mcengine.api.mcengine.MCEngineApi;
 import io.github.mcengine.api.mcengine.Metrics;
-import io.github.mcengine.common.addon.command.AddonCommand;
-import io.github.mcengine.common.addon.tabcompleter.AddOnTabCompleter;
 import org.bukkit.plugin.java.JavaPlugin;
 
 public class MCEngineAddOnSpigotMC extends JavaPlugin {
@@ -22,9 +20,6 @@ public class MCEngineAddOnSpigotMC extends JavaPlugin {
             getServer().getPluginManager().disablePlugin(this);
             return;
         }
-
-        getCommand("addon").setExecutor(new AddonCommand());
-        getCommand("addon").setTabCompleter(new AddOnTabCompleter());
 
         MCEngineApi.checkUpdate(this, getLogger(), "github", "MCEngine", "addon-engine", getConfig().getString("github.token", "null"));
     }
